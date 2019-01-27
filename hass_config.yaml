@@ -1,24 +1,27 @@
     
 sensor:  
-  - platform: mqtt  
-    state_topic: "multisensor/sensornode1"  
-    name: "SN1 PIR"  
-    value_template: '{{ value_json.motion }}'  
-  
-  - platform: mqtt  
-    state_topic: "multisensor/sensornode1"  
-    name: "SN1 Temperature"  
-    unit_of_measurement: "°F"  
-    value_template: '{{ value_json.temperature | round(1) }}'  
-
-  - platform: mqtt  
-    state_topic: "multisensor/sensornode1"  
-    name: "SN1 Humidity"  
-    unit_of_measurement: "%"  
-    value_template: '{{ value_json.humidity | round(1) }}'  
-
   - platform: mqtt
-    state_topic: "multisensor/sensornode1"
-    name: "SN1 Real Feel"
-    unit_of_measurement: "°F"
-    value_template: '{{ value_json.heatIndex | round(1) }}'
+    state_topic: "multisensor/bedroom"
+    name: "Bedroom Multisensor"
+    json_attributes:
+      - humidity
+      - motion
+      - temperature
+      - heatIndex
+
+automations:
+  - id: turn_on_bedroom_at_night_when_movement
+    alias: Turn On Bedroom At Night When Movement
+    trigger:
+      platform: mqtt
+      topic: multisensor/bedroom
+    condition:
+      condition: and
+      conditions:
+        - condition: template
+          value_template: '{{ is_state_attr("sensor.bedroom_multisensor", "motion", "ON") }}'   
+        - condition: sun
+          after: sunset
+          after_offset: '-00:30:00'
+        - condition: time
+          before: '21:00:00'

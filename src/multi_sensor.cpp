@@ -8,6 +8,7 @@
 #include <ArduinoJson.h>
 
 #include "config.h"
+#include "multi_sensor.h"
 
 int OTAport = 8266;
 
@@ -40,12 +41,10 @@ void setup() {
   delay(10);
 
   ArduinoOTA.setPort(OTAport);
-
   ArduinoOTA.setHostname(SENSORNAME);
-
   ArduinoOTA.setPassword((const char *)OTApassword);
 
-  Serial.print("calibrating sensor ");
+  Serial.print("calibrating sensor");
   delay(1000);
 
   Serial.println("Starting Node named " + String(SENSORNAME));
@@ -152,13 +151,11 @@ void loop() {
   ArduinoOTA.handle();
   
   if (!client.connected()) {
-    software_Reset();
+    softwareReset();
   }
 
   client.loop();
-
   
-
   // get pir valuea nd send it
   pirValue = digitalRead(PIRPIN);
   if (pirValue == LOW && pirStatus != 1) {
@@ -189,7 +186,7 @@ void loop() {
   }
 }
 
-void software_Reset() {
+void softwareReset() {
   Serial.print("resetting");
   ESP.reset(); 
 }
