@@ -32,23 +32,17 @@ PubSubClient client(espClient);
 DHT dht(DHTPIN, DHTTYPE);
 
 void setup() {
-  Serial.begin(115200);
-
   pinMode(PIRPIN, INPUT);
   pinMode(DHTPIN, INPUT);
 
-  Serial.begin(115200);
+  Serial.begin(9600);
   delay(10);
 
   ArduinoOTA.setPort(OTAport);
   ArduinoOTA.setHostname(SENSORNAME);
   ArduinoOTA.setPassword((const char *)OTApassword);
 
-  Serial.print("calibrating sensor");
-  delay(1000);
-
   Serial.println("Starting Node named " + String(SENSORNAME));
-
   setup_wifi();
   client.setServer(mqtt_server, mqtt_port);
 
@@ -156,7 +150,7 @@ void loop() {
 
   client.loop();
   
-  // get pir valuea nd send it
+  // get pir valuea and send it
   pirValue = digitalRead(PIRPIN);
   if (pirValue == LOW && pirStatus != 1) {
     motionStatus = false;
